@@ -172,58 +172,26 @@ def make_fading_shape(path="shape.gif", size=(512, 512), frames_count=30, durati
 
 
 
-        # Convert to P mode (palette) which GIF uses. To preserve transparency
-        # we create a paletted image with a dedicated transparent color index.
-        # Approach: paste RGBA onto a transparent background and quantize.
-        pal = img.convert("RGBA")
-        # Create a white background image to ensure white appears in palette
-        # when a shape is white; we'll later mark fully-transparent pixels as
-        # transparent in the palette.
-        background = Image.new("RGBA", size, (255, 255, 255, 0))
-        composed = Image.alpha_composite(background, pal)
+        # We no longer need to preserve transparency. Composite the RGBA frame
+        # over a black opaque background and quantize to a 256-color palette
+        # suitable for GIFs. This avoids special-case transparent palette indices
+        # and simplifies saving.
+        background = Image.new("RGBA", size, (0, 0, 0, 255))
+        composed = Image.alpha_composite(background, img)
 
         # Quantize to 256 colors (required for GIF) using adaptive palette
         p = composed.convert("P", palette=Image.ADAPTIVE, colors=256)
 
-        # Find a color index to use as transparent. We'll pick the color of a
-        # fully transparent pixel in the RGBA image (which in composed will be
-        # (255,255,255,0) -> after conversion it maps to some palette index).
-        # To be robust, explicitly set any pixel that was transparent in the
-        # RGBA source to a single palette index we reserve for transparency.
-        alpha = img.split()[-1]
-        mask = Image.eval(alpha, lambda a: 255 if a == 0 else 0)
+        frames.append(p)
 
-        # Choose a transparency index (use the last palette entry)
-        transp_index = 255
-
-        # Build a palette image we can modify: get the palette bytes
-        palette = p.getpalette()
-
-        # Ensure palette length is 768 (256*3)
-        if palette is None:
-            palette = [0] * 768
-
-        # Create an image where transparent areas are set to the transparency index
-        p_bytes = p.tobytes()
-        # Map pixels: where mask==255, set index to transp_index
-        p2 = Image.frombytes("P", p.size, p_bytes)
-        p2.paste(transp_index, mask=mask)
-
-        # Ensure the palette is attached and set transparency
-        p2.putpalette(p.getpalette())
-        p2.info['transparency'] = transp_index
-
-        frames.append(p2)
-
-    # Save as looping GIF with transparency preserved
+    # Save as looping GIF (opaque frames; no transparency)
     frames[0].save(
         path,
         save_all=True,
         append_images=frames[1:],
         duration=duration,
         loop=0,
-        transparency=frames[0].info.get('transparency', 255),
-        disposal=2,
+        optimize=False,
     )
 
 
