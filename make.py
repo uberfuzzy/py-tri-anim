@@ -201,7 +201,7 @@ if __name__ == "__main__":
     i_size = 512
     seed = int(time.time())
 
-    t_sizes = [8, 16, 64, 128]
+    t_sizes = [8, 16, 32, 64, 128]
     for t_size in t_sizes:
         fn = "shape_{}_{}.gif".format(i_size, t_size)
         print("creating file:{}".format(fn))
