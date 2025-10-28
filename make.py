@@ -84,6 +84,15 @@ def make_fading_shape(path="shape.gif", size=(512, 512), frames_count=30, durati
         random.seed(seed)
     cell_phase_offsets = [random.random() for _ in range(total_cells)]
 
+    # For each row, make the last column's phase offset equal to the first's.
+    # This ensures the off-screen left column (col 0) matches the rightmost
+    # visible column so the pattern wraps horizontally.
+    for r in range(rows):
+        first_idx = r * cols
+        last_idx = first_idx + cols - 1
+        if last_idx < len(cell_phase_offsets):
+            cell_phase_offsets[last_idx] = cell_phase_offsets[first_idx]
+
     # We'll render RGBA frames with fully transparent background, then convert
     # to a paletted GIF while preserving transparency.
     def sample_multistop_color(u):
