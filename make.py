@@ -65,6 +65,7 @@ def make_fading_shape(path="shape.gif", size=(512, 512), frames_count=30, durati
     col_widths = [tile_w] * cols
     # Start x positions shifted left by half so column 0 is off-screen
     col_x = [(i - 1) * half for i in range(cols)]
+    # print(col_x)
 
     base_h = h // rows
     extra_h = h % rows
@@ -136,33 +137,31 @@ def make_fading_shape(path="shape.gif", size=(512, 512), frames_count=30, durati
             cell_phase = (phase + offset) % 1.0
             col = sample_multistop_color(cell_phase)
 
-            x0 = col_x[cell_col]
-            y0 = row_y[cell_row]
-            x1 = x0 + col_widths[cell_col]
-            y1 = y0 + row_heights[cell_row]
+            x_left = col_x[cell_col]
+            y_left = row_y[cell_row]
+            x_right = x_left + col_widths[cell_col]
+            y_right = y_left
 
-            # Allow left-side drawing (x0 may be negative) and right-side
-            # drawing (x1 may exceed width). Clamp only vertical bounds.
-            y0 = max(0, y0)
-            y1 = min(h, y1)
+            x_point = x_left + (col_widths[cell_col] // 2)
+            y_point = y_left
 
-            # Overlap between tiles; set to 0 so triangles abut exactly.
-            overlap = 0
-            x0o = max(0, x0 - overlap)
-            y0o = max(0, y0 - overlap)
-            x1o = min(w, x1 + overlap)
-            y1o = min(h, y1 + overlap)
+            rh = row_heights[cell_row]
 
             # Alternate triangle orientation for variety: if (row+col) is even
             # draw an upward-pointing triangle, otherwise downward.
             if ((cell_row + cell_col) % 2) == 0:
                 # Up-pointing triangle: bottom-left, bottom-right, top-center
-                points = [(x0o, y1o), (x1o, y1o), ((x0o + x1o) // 2, y0o)]
+                points = [(x_left, y_left+rh), (x_right, y_right+rh), (x_point, y_point)]
+                # print("up:", points)
+                draw.polygon(points, fill=col + (255,))
             else:
                 # Down-pointing triangle: top-left, top-right, bottom-center
-                points = [(x0o, y0o), (x1o, y0o), ((x0o + x1o) // 2, y1o)]
+                points = [(x_left, y_left), (x_right, y_right), (x_point, y_point+rh)]
+                # print("down:", points)
+                draw.polygon(points, fill=col + (255,))
+                pass
 
-            draw.polygon(points, fill=col + (255,))
+
 
         # Convert to P mode (palette) which GIF uses. To preserve transparency
         # we create a paletted image with a dedicated transparent color index.
@@ -225,8 +224,9 @@ if __name__ == "__main__":
     i_size = 512
     seed = int(time.time())
 
-    t_sizes = [64,8]
+    t_sizes = [8, 16, 64, 128]
     for t_size in t_sizes:
         fn = "shape_{}_{}.gif".format(i_size, t_size)
+        print("creating file:{}".format(fn))
         make_fading_shape(path=fn, seed=seed, size=(i_size, i_size), tile_size=t_size)
 
