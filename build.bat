@@ -1,2 +1,2 @@
 python make.py
-dir *.gif
+dir output\*.gif

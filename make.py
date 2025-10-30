@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
     for t_size in t_sizes:
 
-        fn = "{}_{}_{}.gif".format(prefix, i_size, t_size)
+        fn = "output/{}_{}_{}.gif".format(prefix, i_size, t_size)
         print("creating file:{}".format(fn))
         make_fading_shape(path=fn, seed=seed, size=(i_size, i_size), tile_size=t_size)
 

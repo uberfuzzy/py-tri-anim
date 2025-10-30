@@ -3,9 +3,11 @@ from pathlib import Path
 import sys
 
 BASE = Path(__file__).resolve().parent
+OUT_BASE = BASE / "output"
+
 CONFIG_PATH = BASE / "config.json"
 TEMPLATE_PATH = BASE / "test.html.template"
-OUT_PATH = BASE / "test.html"
+OUT_PATH = OUT_BASE / "test.html"
 
 def main():
   try:

@@ -3,14 +3,14 @@
   let i_size = I_SIZE;
   let t_sizes = T_SIZES;
 
-  for (let si = 0; si < sizes.length; si++) {
+  for (let si = 0; si < t_sizes.length; si++) {
     let fn = `${f_prefix}_${i_size}_${t_sizes[si]}.gif`;
     document.write(`${fn}<br/>`);
+    document.write(`<div>`);
     for (let x = 0; x < 3; x++) {
-      document.write(`<div>`);
       document.write(`<img src="${fn}">`);
-      document.write(`</div>`);
     }
+    document.write(`</div>`);
     document.write(`<hr/><br/>`);
   }
 </script>
