@@ -183,3 +183,4 @@ cython_debug/
 *.gif
 upload.bat
 *.lnk
+test.html

@@ -2,6 +2,8 @@ from math import cos, pi
 import random
 from PIL import Image, ImageDraw
 import time
+from pathlib import Path
+import json
 
 
 def lerp(a, b, t):
@@ -198,10 +200,45 @@ def make_fading_shape(path="shape.gif", size=(512, 512), frames_count=30, durati
 if __name__ == "__main__":
     # Use a fixed seed for reproducible random starting positions when run
     # directly. You can change or remove the seed for more variation.
-    i_size = 512
     seed = int(time.time())
 
-    t_sizes = [8, 16, 32, 64, 128]
+    # Defaults
+    default_i_size = 512
+    default_t_sizes = [16]
+
+    # Try to load config.json from the script directory
+    config_path = Path(__file__).resolve().parent / "config.json"
+    i_size = default_i_size
+    t_sizes = default_t_sizes
+
+    if config_path.exists():
+        try:
+            with config_path.open("r", encoding="utf-8") as fh:
+                cfg = json.load(fh)
+            if isinstance(cfg, dict):
+                if "i_size" in cfg:
+                    val = cfg["i_size"]
+                    if isinstance(val, int) and val > 0:
+                        i_size = val
+                if "t_sizes" in cfg:
+                    raw = cfg["t_sizes"]
+                    if isinstance(raw, list):
+                        parsed = []
+                        for v in raw:
+                            try:
+                                iv = int(v)
+                                if iv > 0:
+                                    parsed.append(iv)
+                            except Exception:
+                                continue
+                        if parsed:
+                            t_sizes = parsed
+        except Exception as e:
+            print(f"warning: could not read {config_path.name}: {e}. Using defaults.")
+    else:
+        # No config file — continue with defaults
+        pass
+
     for t_size in t_sizes:
         fn = "shape_{}_{}.gif".format(i_size, t_size)
         print("creating file:{}".format(fn))
