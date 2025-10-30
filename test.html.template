@@ -1,9 +1,10 @@
 <script>
+  let f_prefix = S_PREFIX;
   let i_size = I_SIZE;
   let t_sizes = T_SIZES;
 
   for (let si = 0; si < sizes.length; si++) {
-    let fn = `shape_${i_size}_${t_sizes[si]}.gif`;
+    let fn = `${f_prefix}_${i_size}_${t_sizes[si]}.gif`;
     document.write(`${fn}<br/>`);
     for (let x = 0; x < 3; x++) {
       document.write(`<div>`);

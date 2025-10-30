@@ -205,11 +205,13 @@ if __name__ == "__main__":
     # Defaults
     default_i_size = 512
     default_t_sizes = [16]
+    default_prefix = "shape"
 
     # Try to load config.json from the script directory
     config_path = Path(__file__).resolve().parent / "config.json"
     i_size = default_i_size
     t_sizes = default_t_sizes
+    prefix = default_prefix
 
     if config_path.exists():
         try:
@@ -233,14 +235,25 @@ if __name__ == "__main__":
                                 continue
                         if parsed:
                             t_sizes = parsed
+                if 'cfg' in cfg:
+                    try:
+                        prefix = str(cfg.get("prefix", default_prefix))
+                    except Exception:
+                        prefix = default_prefix
+                else:
+                    prefix = default_prefix
+
         except Exception as e:
             print(f"warning: could not read {config_path.name}: {e}. Using defaults.")
     else:
         # No config file — continue with defaults
         pass
 
+    # Determine filename prefix from config (key "prefix") or default "shape"
+
     for t_size in t_sizes:
-        fn = "shape_{}_{}.gif".format(i_size, t_size)
+
+        fn = "{}_{}_{}.gif".format(prefix, i_size, t_size)
         print("creating file:{}".format(fn))
         make_fading_shape(path=fn, seed=seed, size=(i_size, i_size), tile_size=t_size)
 
