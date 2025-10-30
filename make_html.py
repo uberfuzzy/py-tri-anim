@@ -7,7 +7,7 @@ OUT_BASE = BASE / "output"
 
 CONFIG_PATH = BASE / "config.json"
 TEMPLATE_PATH = BASE / "test.html.template"
-OUT_PATH = OUT_BASE / "test.html"
+OUT_PATH = OUT_BASE / "index.html"
 
 def main():
   try:
