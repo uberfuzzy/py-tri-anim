@@ -1,0 +1,17 @@
+
+<div>
+<script>
+let sizes = [8,16,32,64,128];
+
+for(let si = 0; si < sizes.length; si++) {
+
+let fn = `shape_512_${sizes[si]}.gif`;
+document.write(`${fn}<br/>`);
+for(let x = 0; x<3; x++) {
+document.write(`<img src="${fn}">`);
+}
+document.write(`<hr/><br/>`);
+
+}
+</script>
+</div>
