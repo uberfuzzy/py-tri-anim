@@ -7,11 +7,11 @@
     let fn = `${f_prefix}_${i_size}_${t_sizes[si]}.gif`;
     document.write(`${fn}<br/>`);
     document.write(`<div>`);
-    for (let x = 0; x < 3; x++) {
+    for (let x = 0; x < 2; x++) {
       document.write(`<img src="${fn}">`);
     }
     document.write(`<br/>`);
-    for (let x = 0; x < 3; x++) {
+    for (let x = 0; x < 2; x++) {
       document.write(`<img src="${fn}">`);
     }
     document.write(`</div>`);
